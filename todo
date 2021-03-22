@@ -1,0 +1,22 @@
+#Game Todos
+- Build Random Generated Path
+    - Add specific dead ends
+    - Have size adjustments
+
+- Create Play Class
+- Develop boundary class
+
+
+#Current Sprint Task:
+- Determine Top, Left, Right, Bottom Boundary
+
+
+
+
+Path making logic:
+- Can only have to two connections to the wall
+    - I will need logic that determines if a square is a boundary
+    - These numbers will be generated and saved in the constructor
+- Can only draw paths that connect
+    - I will need logic that determines if the square around it
+    - This will be a function that checks
