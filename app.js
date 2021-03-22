@@ -8,7 +8,9 @@ function main(){
     
     let cb = new CanvasBuilder(ctx);
     cb.buildGrid();
-    cb.buildTest();
+    // cb.buildTest();
+
+    cb.buildPath();
 
     // generateGrid(ctx);
 
