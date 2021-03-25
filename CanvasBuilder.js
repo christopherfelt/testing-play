@@ -1,4 +1,9 @@
 class CanvasBuilder {
+
+
+    // Will need abstract all this into a seperate class
+
+
     constructor(context){
         this.ctx = context;
         this.x = 0;
