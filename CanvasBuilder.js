@@ -20,15 +20,12 @@ class CanvasBuilder {
         let x =0;
         let y=0;
         for(let i = 0; i < 16; i++){
-    
             this.ctx.strokeRect(x*100, y*100, 100, 100);
             x++;
-    
             if( x==4 ){
                 x=0,
                 y++;
             }
-    
         }
     }
 
@@ -61,10 +58,63 @@ class CanvasBuilder {
         let y_counter = 1;
         for(let i = 1; i <= this.gridSize; i++){
             if(y_counter == 1 || x_counter == this.gridWidth || x_counter == 1 || i > (this.gridSize-this.gridWidth)){
-                console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
                 
                 this.boundaryCells.push(i);
             }
+            if(y_counter == 1){
+                if(x_counter == 1){
+                    console.log("Top Left Corner");
+                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                } else if (x_counter == this.gridWidth){
+                    console.log("Top Right Corner");
+                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                } else {
+                    console.log("Top");
+                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                }
+            } else if (y_counter == this.gridHeigth){
+                if(x_counter == 1){
+                    console.log("Bottom Left Corner");
+                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                } else if(x_counter == this.gridWidth){
+                    console.log("Bottom Right Corner");
+                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                } else {
+                    console.log("Bottom");
+                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                }
+            } else if (x_counter == 1){
+                console.log("Left");
+                console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+            } else if (x_counter == this.gridWidth){
+                console.log("Right");
+                console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+            } 
+
+            // Top Left Corner
+            // if Y counter == 1
+                // if x counter == 1
+                    // top left corner
+                // else if x counter == this.gridWidth
+                    // top right corner
+                // else
+                    // top
+            // if Ycounter == gridHeigth
+                // if x counter == 1
+                    // bottom left corner
+                // if x counter == this.gridWith
+                    // bottom right corner
+                // else
+                    // bottom
+            // if X_counter == 1
+                // Left side
+            // if x_counter == gridWidth
+                // Rgiht Side
+            
+            // Top Right Corner
+            // Y_Counter == 1
+                // X counter == this.gridWidth
+
             if(x_counter==this.gridWidth){
                 y_counter++;
                 x_counter=0;
