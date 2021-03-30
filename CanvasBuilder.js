@@ -14,6 +14,7 @@ class CanvasBuilder {
         this.gridHeight = 4;
         this.gridSize = this.gridWidth * this.gridHeight;
         this.boundaryCells = [];
+        this.unacceptablePaths = [];
     }
 
     buildGrid(){
@@ -33,7 +34,7 @@ class CanvasBuilder {
         let x_counter = 0;
         let y_counter = 0;
         
-        this.determineBoundary();
+        this.determineUnacceptablePathsForBoundaryCells();
 
         for(let i = 0; i < 16; i++){
             //random
@@ -53,67 +54,53 @@ class CanvasBuilder {
 
     }
 
-    determineBoundary(){
+    determineUnacceptablePathsForBoundaryCells(){
         let x_counter = 1;
         let y_counter = 1;
         for(let i = 1; i <= this.gridSize; i++){
-            if(y_counter == 1 || x_counter == this.gridWidth || x_counter == 1 || i > (this.gridSize-this.gridWidth)){
-                
-                this.boundaryCells.push(i);
-            }
             if(y_counter == 1){
                 if(x_counter == 1){
                     console.log("Top Left Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                    this.unacceptablePaths.push([0, 1, 2, 3, 4, 5, 6, 8, 9, 10]);
+                    // this.boundaryCells.push("TOP_LEFT_CORNER");
                 } else if (x_counter == this.gridWidth){
                     console.log("Top Right Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                    this.unacceptablePaths.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 10])
+                    // this.boundaryCells.push("TOP_RIGHT_CORNER");
                 } else {
                     console.log("Top");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                    // this.boundaryCells.push("TOP");
                 }
-            } else if (y_counter == this.gridHeigth){
+            } else if (y_counter == this.gridHeight){
                 if(x_counter == 1){
                     console.log("Bottom Left Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                    // this.boundaryCells.push("BOTTOM_LEFT_CORNER");
                 } else if(x_counter == this.gridWidth){
                     console.log("Bottom Right Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                    // this.boundaryCells.push("BOTTOM_RIGHT_CORNER");
                 } else {
                     console.log("Bottom");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                    // this.boundaryCells.push("BOTTOM");
                 }
             } else if (x_counter == 1){
                 console.log("Left");
                 console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                // this.boundaryCells.push("LEFT");
             } else if (x_counter == this.gridWidth){
                 console.log("Right");
                 console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-            } 
-
-            // Top Left Corner
-            // if Y counter == 1
-                // if x counter == 1
-                    // top left corner
-                // else if x counter == this.gridWidth
-                    // top right corner
-                // else
-                    // top
-            // if Ycounter == gridHeigth
-                // if x counter == 1
-                    // bottom left corner
-                // if x counter == this.gridWith
-                    // bottom right corner
-                // else
-                    // bottom
-            // if X_counter == 1
-                // Left side
-            // if x_counter == gridWidth
-                // Rgiht Side
-            
-            // Top Right Corner
-            // Y_Counter == 1
-                // X counter == this.gridWidth
+                // this.boundaryCells.push("RIGHT");
+            } else {
+                console.log("Center");
+                console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+                // this.boundaryCells.push("CENTER");
+            }
 
             if(x_counter==this.gridWidth){
                 y_counter++;
@@ -124,7 +111,16 @@ class CanvasBuilder {
         console.log(this.boundaryCells);
     }
 
-    buildPathGridCell(){
+    determineRandomPath(cn){
+        // cn = cell number
+        let bc = this.boundaryCells
+        // !includes
+        if(bc[cn] == "TOP_LEFT_CORNER"){
+
+        }
+    }
+
+    buildPathGridCell(randomInt){
         let randomInt = Math.floor(Math.random()*Math.floor(11));
         switch(randomInt){
             // Straight Path Horizontal
