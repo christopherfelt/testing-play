@@ -1,3 +1,6 @@
+import {ACCEPTABLE_BOUNDARY_PATH_TYPES} from './PathData.js';
+ 
+
 class CanvasBuilder {
 
 
@@ -35,7 +38,7 @@ class CanvasBuilder {
         let x_counter = 0;
         let y_counter = 0;
         
-        this.determineAcceptablePathsForBoundaryCells();
+        this.determineAcceptablePathsForCells();
 
         for(let i = 0; i < 16; i++){
             //random
@@ -56,7 +59,7 @@ class CanvasBuilder {
 
     }
 
-    determineAcceptablePathsForBoundaryCells(){
+    determineAcceptablePathsForCells(){
         // consider just doing a return
         let x_counter = 1;
         let y_counter = 1;
@@ -65,50 +68,50 @@ class CanvasBuilder {
                 if(x_counter == 1){
                     console.log("Top Left Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push([7]);
+                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['TOP_LEFT_CORNER']);
                     // this.boundaryCells.push("TOP_LEFT_CORNER");
                 } else if (x_counter == this.gridWidth){
                     console.log("Top Right Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push([9])
+                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['TOP_RIGHT_CORNER'])
                     // this.boundaryCells.push("TOP_RIGHT_CORNER");
                 } else {
                     console.log("Top");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push([0, 4, 7, 9])
+                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['TOP'])
                     // this.boundaryCells.push("TOP");
                 }
             } else if (y_counter == this.gridHeight){
                 if(x_counter == 1){
                     console.log("Bottom Left Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push([8])
+                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['BOTTOM_LEFT_CORNER'])
                     // this.boundaryCells.push("BOTTOM_LEFT_CORNER");
                 } else if(x_counter == this.gridWidth){
                     console.log("Bottom Right Corner");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push([10])
+                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['BOTTOM_RIGHT_CORNER'])
                     // this.boundaryCells.push("BOTTOM_RIGHT_CORNER");
                 } else {
                     console.log("Bottom");
                     console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push([0, 3, 8, 10]);
+                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['BOTTOM']);
                     // this.boundaryCells.push("BOTTOM");
                 }
             } else if (x_counter == 1){
                 console.log("Left");
                 console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                this.acceptablePaths.push([1, 5, 7, 8 ]);
+                this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['LEFT']);
                 // this.boundaryCells.push("LEFT");
             } else if (x_counter == this.gridWidth){
                 console.log("Right");
                 console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                this.acceptablePaths.push([1, 6, 9, 10]);
+                this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['RIGHT']);
                 // this.boundaryCells.push("RIGHT");
             } else {
                 console.log("Center");
                 console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                this.acceptablePaths.push([])
+                this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['CENTER'])
                 // this.boundaryCells.push("CENTER");
             }
 
@@ -139,55 +142,55 @@ class CanvasBuilder {
         // let randomInt = Math.floor(Math.random()*Math.floor(11));
         switch(this.randomPath){
             // Straight Path Horizontal
-            case 0:
+            case 'HORIZONTAL_STRAIGHT':
                 this.drawStraightPathHorizontal();
                 break;
             // Straight Path Vertical
-            case 1:
+            case 'VERTICAL_STRAIGHT':
                 this.drawStraightPathVertical();
                 break;
             // Cross Path
-            case 2:
+            case 'CROSS':
                 this.drawStraightPathHorizontal();
                 this.drawStraightPathVertical();
                 break;
             // Horizontal Top Path
-            case 3:
+            case 'HORIZONTAL_TOP':
                 this.drawStraightPathHorizontal();
                 this.drawTopHalfPath();
                 break;
             // Horizontal Bottom Path
-            case 4:
+            case 'HORIZONTAL_BOTTOM':
                 this.drawStraightPathHorizontal();
                 this.drawBottomHalfPath();
                 break;
             // Vertical Right Path
-            case 5:
+            case 'VERTICAL_RIGHT':
                 this.drawStraightPathVertical();
                 this.drawRightHalfPath();
                 break;
             // Vertical Left Path
-            case 6:
+            case 'VERTICAL_LEFT':
                 this.drawStraightPathVertical();
                 this.drawLeftHalfPath();
                 break;
             // Right Bottom Corner Path
-            case 7:
+            case 'RIGHT_BOTTOM':
                 this.drawRightHalfPath();
                 this.drawBottomHalfPath();
                 break;
             // Right Top Corner Path
-            case 8:
+            case 'RIGHT_TOP':
                 this.drawRightHalfPath();
                 this.drawTopHalfPath();
                 break;
             // Left Bottom Corner Path
-            case 9:
+            case 'LEFT_BOTTOM':
                 this.drawLeftHalfPath();
                 this.drawBottomHalfPath();
                 break;
             // Left Top Corner Path
-            case 10:
+            case 'LEFT_TOP':
                 this.drawLeftHalfPath();
                 this.drawTopHalfPath();
                 break;

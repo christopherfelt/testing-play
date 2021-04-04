@@ -2,6 +2,8 @@ let acceptableBoudaryPathTypes = {
     TOP_LEFT_CORNER = []
 }
 
+
+
 let gridData = {
     cell_1:{
         cellBoundaryType: "CENTER",

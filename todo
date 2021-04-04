@@ -8,7 +8,14 @@
 
 
 #Current Sprint Task:
-- change the names in the switch
+- Create a PathDataGenerator.js
+    - Create a Class for Grid Data
+    - Create a Class for Cell Data
+        - Abstract Out Methods for CellData
+- Create a PathDrawer.js
+    - Abstract all the draw methods
+-Create a Helpers.js
+    - Abstract the Grid method out
 
 
 
@@ -20,3 +27,10 @@ Path making logic:
 - Can only draw paths that connect
     - I will need logic that determines if the square around it
     - This will be a function that checks
+
+- Future Refactors:
+    - CellData
+        - This help generate and manage data for each cell generated
+    - GridData
+        - Generate and manage data for grid specific data
+            - Location of entrance and exit
