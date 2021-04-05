@@ -7,7 +7,13 @@
 - Develop boundary class
 
 
-#Current Sprint Task:
+
+
+#Next Daily Task:
+- Finish adding generateCellRecord to generatePathData
+- Test
+
+#Sprint Tasks:
 - Create a PathDataGenerator.js
     - Create a Class for Grid Data
     - Create a Class for Cell Data
@@ -16,6 +22,7 @@
     - Abstract all the draw methods
 -Create a Helpers.js
     - Abstract the Grid method out
+-Create function to determine connecting paths
 
 
 

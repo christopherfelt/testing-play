@@ -34,6 +34,8 @@ class CanvasBuilder {
         }
     }
 
+    // leave build path - it will be joined will player, AI so on
+    
     buildPath(){
         let x_counter = 0;
         let y_counter = 0;
@@ -41,7 +43,6 @@ class CanvasBuilder {
         this.determineAcceptablePathsForCells();
 
         for(let i = 0; i < 16; i++){
-            //random
             this.x = x_counter * 100;
             this.y = y_counter * 100;
             

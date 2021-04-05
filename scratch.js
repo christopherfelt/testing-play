@@ -8,7 +8,8 @@ let gridData = {
     cell_1:{
         cellBoundaryType: "CENTER",
         coors: [2,1],
-        acceptableBoundaryPathTypes: acceptableBoudaryPathTypes["CENTER"]
+        acceptableBoundaryPathTypes: acceptableBoudaryPathTypes["CENTER"],
+        selectedPath: 'CROSS_PATH'
     }
 }
 
