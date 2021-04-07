@@ -7,8 +7,8 @@ function main(){
     var ctx = c.getContext("2d");
     
     let cb = new CanvasBuilder(ctx);
-    // cb.buildGrid();
-    cb.buildPath();
+    cb.buildGrid();
+    cb.buildCanvas();
 
 }
 

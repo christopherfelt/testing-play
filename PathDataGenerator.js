@@ -29,36 +29,24 @@ class PathDataGenerator {
         this.cellHeight = height;
     }
 
-    getCellData(){
-        return this.cellData
+    getAllData(){
+        let gridData = {
+            cellWidth: this.cellWidth,
+            cellHeight: this.cellHeight,
+            gridSize: this.gridSize,
+            cellData: this.cellData
+        }
+        return gridData;
     }
 
-    // generatePathData(){
-
-    //     let x_counter = 0;
-    //     let y_counter = 0;
-
-    //     this.determineAcceptablePathsForCells();
-
-    //     for(let i = 0; i < this.gridSize; i++){
-    //         this.x = x_counter * this.cellWidth;
-    //         this.y = y_counter * this.cellHeight;
-            
-    //         this.determineRandomPath(i);
-
-    //         x_counter++;
-    
-    //         if( x_counter==4 ){
-    //             x_counter=0,
-    //             y_counter++;
-    //         }
-    
-    //     }
-
-    // }
-
-
     generatePathData(){
+        this.generateInitialPathData();
+        this.analyzePath();
+
+    }
+
+
+    generateInitialPathData(){
         // consider doing an array of objects
         // add random this this function
         let x_counter = 1;
@@ -67,58 +55,27 @@ class PathDataGenerator {
 
             if(y_counter == 1){
                 if(x_counter == 1){
-                    // console.log("Top Left Corner");
-                    // console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    // cellDataObj["cellBoundayType"] = "TOP_LEFT_CORNER";
-                    // cellDataObj["coordinates"] = [x_counter, y_counter];
-                    // cellDataObj["acceptableBoundaryPathTypes"] = ACCEPTABLE_BOUNDARY_PATH_TYPES['TOP_LEFT_CORNER'];
-                    // cellDataObj["selectedPath"] = this.determineRandomPath(cellDataObj); //going to need to fix this
-                    this.generateCellRecord('TOP_LEFT_CORNER');
-
+                    this.generateCellRecord('TOP_LEFT_CORNER', x_counter, y_counter);
 
                 } else if (x_counter == this.gridWidth){
-                    console.log("Top Right Corner");
-                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['TOP_RIGHT_CORNER'])
-                    // this.boundaryCells.push("TOP_RIGHT_CORNER");
+                    this.generateCellRecord('TOP_RIGHT_CORNER', x_counter, y_counter);
                 } else {
-                    console.log("Top");
-                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['TOP'])
-                    // this.boundaryCells.push("TOP");
+                    this.generateCellRecord('TOP', x_counter, y_counter);
                 }
             } else if (y_counter == this.gridHeight){
                 if(x_counter == 1){
-                    console.log("Bottom Left Corner");
-                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['BOTTOM_LEFT_CORNER'])
-                    // this.boundaryCells.push("BOTTOM_LEFT_CORNER");
+                    this.generateCellRecord('BOTTOM_LEFT_CORNER', x_counter, y_counter);
                 } else if(x_counter == this.gridWidth){
-                    console.log("Bottom Right Corner");
-                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['BOTTOM_RIGHT_CORNER'])
-                    // this.boundaryCells.push("BOTTOM_RIGHT_CORNER");
+                    this.generateCellRecord('BOTTOM_RIGHT_CORNER', x_counter, y_counter);
                 } else {
-                    console.log("Bottom");
-                    console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                    this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['BOTTOM']);
-                    // this.boundaryCells.push("BOTTOM");
+                    this.generateCellRecord('BOTTOM', x_counter, y_counter);
                 }
             } else if (x_counter == 1){
-                console.log("Left");
-                console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['LEFT']);
-                // this.boundaryCells.push("LEFT");
+                this.generateCellRecord('LEFT', x_counter, y_counter);
             } else if (x_counter == this.gridWidth){
-                console.log("Right");
-                console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['RIGHT']);
-                // this.boundaryCells.push("RIGHT");
+                this.generateCellRecord('RIGHT', x_counter, y_counter);
             } else {
-                console.log("Center");
-                console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
-                this.acceptablePaths.push(ACCEPTABLE_BOUNDARY_PATH_TYPES['CENTER'])
-                // this.boundaryCells.push("CENTER");
+                this.generateCellRecord('CENTER', x_counter, y_counter);
             }
 
             if(x_counter==this.gridWidth){
@@ -127,12 +84,11 @@ class PathDataGenerator {
             }
             x_counter++;
         }
-        // console.log(this.boundaryCells);
     }
 
     generateCellRecord(cellBoundaryType, x_counter, y_counter){
-        console.log(cellBoundaryType);
-        console.log("(" + x_counter + ", " + y_counter, ") i: " + i);
+        // console.log(cellBoundaryType);
+        // console.log("(" + x_counter + ", " + y_counter, ")");
         let cellRecord = {}
         cellRecord["cellBoundayType"] = cellBoundaryType;
         cellRecord["coordinates"] = [x_counter, y_counter];
@@ -152,4 +108,13 @@ class PathDataGenerator {
         return randomPath;
     }
 
+    analyzePath(){
+        // loop through each cell starting with top left corner 
+        // checking the next cell to the right and bottom
+        // for incompatiable paths
+        // I will need to create a library of incompatible paths
+    }
+
 }
+
+export default PathDataGenerator;
