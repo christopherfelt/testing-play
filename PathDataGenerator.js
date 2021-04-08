@@ -1,4 +1,4 @@
-import {ACCEPTABLE_BOUNDARY_PATH_TYPES} from './PathData.js';
+import {ACCEPTABLE_BOUNDARY_PATH_TYPES, COMPATIBLE_PATHS} from './PathDataLibrary.js';
 
 
 class PathDataGenerator {
@@ -44,7 +44,6 @@ class PathDataGenerator {
         this.analyzePath();
 
     }
-
 
     generateInitialPathData(){
         // consider doing an array of objects
@@ -113,6 +112,74 @@ class PathDataGenerator {
         // checking the next cell to the right and bottom
         // for incompatiable paths
         // I will need to create a library of incompatible paths
+
+        let cellData = this.cellData;
+
+        let compatiblityReport=[
+            // {
+            //     cell:{
+            //         coordinates: [],
+            //         selectedPath: ''
+            //     },
+            //     bottom: {
+            //         coordinates: [],
+            //         selectedPath: '',
+            //         conflict: false
+            //     },
+            //     right: {
+            //         coordinates: [],
+            //         selectedPath: '',
+            //     }
+            // }
+        ]
+
+        for(let i = 0; i < cellData; i++){
+
+            let cell = cellData[i];
+
+            let reportRecord = {
+                cell:{},
+                bottom:{},
+                right:{}
+            };
+
+            reportRecord.cell.coordinates = cell.coordinates;
+            reportRecord.cell.selectedPath = cell.selectedPath;
+
+
+            let adjBottomCellCoors = cell.coordinates[1]+1 <= this.gridHeight ? [cell.coordinates[0], cell.coordinates[1]+1] : "NA";
+            let adjRightCellCoors =  cell.coordinates[0]+1 <= this.gridWidth ? [cell.coordinates[0]+1, cell.coordinates[1]] : "NA";
+
+            let adjBottomCellSelectedPath = adjBottomCellCoors == "NA" ? "NA" : cellData.find(p => {
+                if(p.coordinates == adjBottomCellCoors){
+                    return p.selectedPath;
+                }
+            })
+
+            let adjRightCellSelectedPath = adjRightCellCoors == "NA" ? "NA" :  cellData.find(p => {
+                if(p.coordinates == adjRightCellCoors){
+                    return p.selectedPath;
+                }
+            })
+
+            reportRecord.bottom.coordinates = adjBottomCellCoors;
+            reportRecord.bottom.selectedPath = adjBottomCellSelectedPath;
+
+
+            reportRecord.bottom.conflict = !COMPATIBLE_PATHS[cell.selectedPath].includes(adjBottomCellSelectedPath);
+
+            reportRecord.right.coordinates = adjRightCellCoors;
+            reportRecord.right.selectedPath = adjRightCellSelectedPath;
+
+            reportRecord.right.conflict = !COMPATIBLE_PATHS[cell.selectedPath].includes(adjRightCellSelectedPath);
+
+            compatiblityReport.push(reportRecord);
+
+
+        }
+
+
+
     }
 
 }

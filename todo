@@ -35,9 +35,12 @@ Path making logic:
     - I will need logic that determines if the square around it
     - This will be a function that checks
 
+
 - Future Refactors:
     - CellData
         - This help generate and manage data for each cell generated
     - GridData
         - Generate and manage data for grid specific data
             - Location of entrance and exit
+    -Typescript Refactor?
+        - Interfaces for PathDataGenerators?
