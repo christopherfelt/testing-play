@@ -15,6 +15,7 @@ class PathDataGenerator {
         this.acceptablePaths = [];
         this.randomPath = 0;
         this.cellData = [];
+        this.compatiblityReport = [];
 
     }
 
@@ -39,9 +40,16 @@ class PathDataGenerator {
         return gridData;
     }
 
+    getCompatibilityReport(){
+        return this.compatiblityReport;
+    }
+
     generatePathData(){
         this.generateInitialPathData();
+        // this.resolvePathConflicts();
         this.analyzePath();
+        // console.log(this.compatiblityReport);
+
 
     }
 
@@ -107,76 +115,78 @@ class PathDataGenerator {
         return randomPath;
     }
 
+    resolvePathConflicts(){
+        this.analyzePath();
+        // this.generateConflictResolutionStrategy();
+
+    }
+
     analyzePath(){
-        // loop through each cell starting with top left corner 
-        // checking the next cell to the right and bottom
-        // for incompatiable paths
-        // I will need to create a library of incompatible paths
 
         let cellData = this.cellData;
 
-        let compatiblityReport=[
-            // {
-            //     cell:{
-            //         coordinates: [],
-            //         selectedPath: ''
-            //     },
-            //     bottom: {
-            //         coordinates: [],
-            //         selectedPath: '',
-            //         conflict: false
-            //     },
-            //     right: {
-            //         coordinates: [],
-            //         selectedPath: '',
-            //     }
-            // }
-        ]
-
-        for(let i = 0; i < cellData; i++){
-
+        // let compatiblityReport=[
+        //     // {
+        //     //     cell:{
+        //     //         coordinates: [],
+        //     //         selectedPath: ''
+        //     //     },
+        //     //     bottom: {
+        //     //         coordinates: [],
+        //     //         selectedPath: '',
+        //     //         conflict: false
+        //     //     },
+        //     //     right: {
+        //     //         coordinates: [],
+        //     //         selectedPath: '',
+                        // conflict: false
+        //     //     }
+        //     // }
+        // ]
+        
+        for(let i = 0; i < cellData.length; i++){
+            
             let cell = cellData[i];
-
+            
             let reportRecord = {
                 cell:{},
                 bottom:{},
                 right:{}
             };
-
+            
+            // Record the current cells data
             reportRecord.cell.coordinates = cell.coordinates;
             reportRecord.cell.selectedPath = cell.selectedPath;
 
-
+            // Get the coordinates for the bottom and right adjacent cells
             let adjBottomCellCoors = cell.coordinates[1]+1 <= this.gridHeight ? [cell.coordinates[0], cell.coordinates[1]+1] : "NA";
             let adjRightCellCoors =  cell.coordinates[0]+1 <= this.gridWidth ? [cell.coordinates[0]+1, cell.coordinates[1]] : "NA";
-
+            
+            // Find the cells in the celldata
             let adjBottomCellSelectedPath = adjBottomCellCoors == "NA" ? "NA" : cellData.find(p => {
-                if(p.coordinates == adjBottomCellCoors){
-                    return p.selectedPath;
-                }
-            })
+                return p.coordinates[0] == adjBottomCellCoors[0] && p.coordinates[1] == adjBottomCellCoors[1] });
 
-            let adjRightCellSelectedPath = adjRightCellCoors == "NA" ? "NA" :  cellData.find(p => {
-                if(p.coordinates == adjRightCellCoors){
-                    return p.selectedPath;
-                }
+            let adjRightCellSelectedPath = adjRightCellCoors == "NA" ? "NA" :  cellData.find((p) => {
+                return p.coordinates[0] == adjRightCellCoors[0] && p.coordinates[1] == adjRightCellCoors[1]
             })
-
+            
+            // Record cell data for the adjacent cells
             reportRecord.bottom.coordinates = adjBottomCellCoors;
-            reportRecord.bottom.selectedPath = adjBottomCellSelectedPath;
-
-
-            reportRecord.bottom.conflict = !COMPATIBLE_PATHS[cell.selectedPath].includes(adjBottomCellSelectedPath);
+            reportRecord.bottom.selectedPath = adjBottomCellSelectedPath["selectedPath"];
 
             reportRecord.right.coordinates = adjRightCellCoors;
-            reportRecord.right.selectedPath = adjRightCellSelectedPath;
+            reportRecord.right.selectedPath = adjRightCellSelectedPath["selectedPath"];
 
-            reportRecord.right.conflict = !COMPATIBLE_PATHS[cell.selectedPath].includes(adjRightCellSelectedPath);
+            // Determine if the selected paths for the adjacent cells conflict with the current cells path and add it to the record
+            reportRecord.bottom.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["BOTTOM"].includes(reportRecord.bottom.selectedPath);
+            reportRecord.right.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["RIGHT"].includes(reportRecord.right.selectedPath);
 
-            compatiblityReport.push(reportRecord);
-
-
+            this.compatiblityReport.push(reportRecord);
         }
+
+        // generateConflictResolutionStrategy(){
+
+        // }
 
 
 

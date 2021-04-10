@@ -39,6 +39,35 @@ class CanvasBuilder {
         }
         this.ctx.setLineDash([]);
     }
+
+    buildConflictGrid(data, compatiblityReport){
+
+        console.log("data", typeof data);
+        this.ctx.globalAlpha = 0.2;
+        for(let i = 0; i < data.cellData.length; i++){
+            let bottomConflict = compatiblityReport[i].bottom.conflict;
+            let rightConflict = compatiblityReport[i].right.conflict;
+            let cell = data.cellData[i];
+            let color;
+            let x = (cell.coordinates[0]-1)*data.cellWidth;
+            let y = (cell.coordinates[1]-1)*data.cellHeight;
+
+            if(!bottomConflict && !rightConflict){//no conflict
+                color = "#00FF00"; //green
+            } else if(bottomConflict && !rightConflict){//bottom conflict only
+                color = "#FFFF00"; //yellow
+            } else if(!bottomConflict && rightConflict){//right conflict only
+                color = "#0000FF"; //blue
+            } else if(bottomConflict && rightConflict){//both conflicts
+                color = "#FF0000"; //red
+            }
+
+            this.ctx.fillStyle = color;
+            this.ctx.fillRect(x, y, data.cellWidth, data.cellHeight);
+        }
+        this.ctx.globalAlpha = 1.0;
+
+    }
     
     buildCanvas(){
 
@@ -46,6 +75,11 @@ class CanvasBuilder {
         let pdg = new PathDataGenerator();
         pdg.generatePathData()
         let data = pdg.getAllData();
+
+        this.buildGrid();
+
+        let compatiblityReport = pdg.getCompatibilityReport();
+        this.buildConflictGrid(data, compatiblityReport);
 
         let pb = new PathBuilder(data, this.ctx);
         pb.buildPath();
