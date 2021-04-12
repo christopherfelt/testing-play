@@ -42,30 +42,48 @@ class CanvasBuilder {
 
     buildConflictGrid(data, compatiblityReport){
 
-        console.log("data", typeof data);
-        this.ctx.globalAlpha = 0.2;
+        console.log("data", compatiblityReport);
+        
         for(let i = 0; i < data.cellData.length; i++){
+            let topConflict = compatiblityReport[i].top.conflict
             let bottomConflict = compatiblityReport[i].bottom.conflict;
+            let leftConflict = compatiblityReport[i].left.conflict;
             let rightConflict = compatiblityReport[i].right.conflict;
             let cell = data.cellData[i];
             let color;
             let x = (cell.coordinates[0]-1)*data.cellWidth;
             let y = (cell.coordinates[1]-1)*data.cellHeight;
 
-            if(!bottomConflict && !rightConflict){//no conflict
-                color = "#00FF00"; //green
-            } else if(bottomConflict && !rightConflict){//bottom conflict only
-                color = "#FFFF00"; //yellow
-            } else if(!bottomConflict && rightConflict){//right conflict only
-                color = "#0000FF"; //blue
-            } else if(bottomConflict && rightConflict){//both conflicts
-                color = "#FF0000"; //red
-            }
+            // as long as one has a top and another has a bottom and they connect across
 
-            this.ctx.fillStyle = color;
-            this.ctx.fillRect(x, y, data.cellWidth, data.cellHeight);
+
+            let conflictText = "";
+
+            if(topConflict) conflictText += "t";
+            if(bottomConflict) conflictText += "b";
+            if(leftConflict) conflictText += "l";
+            if(rightConflict) conflictText += "r";
+
+            // if(!bottomConflict && !rightConflict){
+            //     color = "#00FF00"; //green
+            // } else if(bottomConflict && !rightConflict){//bottom conflict only
+            //     color = "#FFFF00"; //yellow
+            // } else if(!bottomConflict && rightConflict){//right conflict only
+            //     color = "#0000FF"; //blue
+            // } else if(bottomConflict && rightConflict){//both conflicts
+            //     color = "#FF0000"; //red
+            // }
+
+            // this.ctx.globalAlpha = 0.2;
+            // this.ctx.fillStyle = color;
+            // this.ctx.fillRect(x, y, data.cellWidth, data.cellHeight);
+            // this.ctx.globalAlpha = 1.0;
+
+            this.ctx.fillStyle = "#000000";
+            this.ctx.font = "14px serif";
+            this.ctx.fillText(conflictText, (x + (15)), (y+15));
         }
-        this.ctx.globalAlpha = 1.0;
+        
 
     }
     
