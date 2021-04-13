@@ -46,8 +46,8 @@ class PathDataGenerator {
 
     generatePathData(){
         this.generateInitialPathData();
-        // this.resolvePathConflicts();
         this.analyzePath();
+        this.resolvePathConflicts();
         // console.log(this.compatiblityReport);
 
 
@@ -115,36 +115,20 @@ class PathDataGenerator {
         return randomPath;
     }
 
-    resolvePathConflicts(){
+    resolveConflicts(){
+        // create initial compatibility report
         this.analyzePath();
-        // this.generateConflictResolutionStrategy();
+        // resolveConflicts
+        
 
     }
 
     analyzePath(){
 
         let cellData = this.cellData;
-
-        // let compatiblityReport=[
-        //     // {
-        //     //     cell:{
-        //     //         coordinates: [],
-        //     //         selectedPath: ''
-        //     //     },
-        //     //     bottom: {
-        //     //         coordinates: [],
-        //     //         selectedPath: '',
-        //     //         conflict: false
-        //     //     },
-        //     //     right: {
-        //     //         coordinates: [],
-        //     //         selectedPath: '',
-                        // conflict: false
-        //     //     }
-        //     // }
-        // ]
         
         for(let i = 0; i < cellData.length; i++){
+            // abstract out this logic to a seperate method
             
             let cell = cellData[i];
             
@@ -184,7 +168,7 @@ class PathDataGenerator {
             if(adjTopCellCoors == "NA"){
                 reportRecord.top.coordinates = "NA";
                 reportRecord.top.selectedPath = "NA";
-                reportRecord.top.conflict = false;
+                reportRecord.top.conflict = true;
             } else {
                 reportRecord.top.coordinates = adjTopCellCoors;
                 reportRecord.top.selectedPath = adjTopCellSelectedPath["selectedPath"];
@@ -194,7 +178,7 @@ class PathDataGenerator {
             if(adjBottomCellCoors == "NA"){
                 reportRecord.bottom.coordinates = "NA";
                 reportRecord.bottom.selectedPath = "NA";
-                reportRecord.bottom.conflict = false;
+                reportRecord.bottom.conflict = true;
             } else {
                 reportRecord.bottom.coordinates = adjBottomCellCoors;
                 reportRecord.bottom.selectedPath = adjBottomCellSelectedPath["selectedPath"];
@@ -204,7 +188,7 @@ class PathDataGenerator {
             if(adjLeftCellCoors == "NA"){
                 reportRecord.left.coordinates = "NA";
                 reportRecord.left.selectedPath = "NA";
-                reportRecord.left.conflict = false;
+                reportRecord.left.conflict = true;
             } else {
                 reportRecord.left.coordinates = adjLeftCellCoors;
                 reportRecord.left.selectedPath = adjLeftCellSelectedPath["selectedPath"];
@@ -214,7 +198,7 @@ class PathDataGenerator {
             if(adjRightCellCoors == "NA"){
                 reportRecord.right.coordinates = "NA";
                 reportRecord.right.selectedPath = "NA";
-                reportRecord.right.conflict = false;
+                reportRecord.right.conflict = true;
             } else {
                 reportRecord.right.coordinates = adjRightCellCoors;
                 reportRecord.right.selectedPath = adjRightCellSelectedPath["selectedPath"];
@@ -224,13 +208,88 @@ class PathDataGenerator {
             this.compatiblityReport.push(reportRecord);
         }
 
-        // generateConflictResolutionStrategy(){
+    }
 
-        // }
+    resolvePathConflicts(){
+
+        let cellData = this.cellData;
+       
+
+        // get cells in window
+        let topLeft = [1, 1];
+        let topRight;
+        let bottomLeft;
+        let bottomRight;
 
 
+        while (topLeft[1] < this.gridHeight){
+            topRight = [topLeft[0]+1, topLeft[1]];
+            bottomLeft = [topLeft[0], topLeft[1]+1];
+            bottomRight = [topLeft[0]+1, topLeft[1]+1];
+            console.log(topLeft, topRight, bottomLeft, bottomRight);
+
+            // // find cell report record
+            let window = [topLeft, topRight, bottomLeft, bottomRight]
+            let compatibilityRecordsForWindowCells = [];
+
+            // //find if one has all conflicts
+            for(let c = 0; c < window.length; c++){
+                let windowCell = window[c];
+                let cell = this.compatiblityReport.find(r => {
+                    return r.cell.coordinates[0] == windowCell[0] && r.cell.coordinates[1] == windowCell[1];
+                })
+
+                let allConflicts = checkForAllConflicts(cell);
+
+                console.log("All Conflicts: " + windowCell + " " + allConflicts);
+
+                // if(cell)
+            }
+
+            // let topLeftCompatibilityRecord = this.compatiblityReport.find(r => {
+            //     return r.cell.coordinates[0] == windowCell[0] && r.cell.coordinates[1] == windowCell[1];
+            // })
+
+            
+
+
+            topLeft[0] += 2;
+            if(topLeft[0] >= this.gridWidth){
+                topLeft[0] = 1;
+                topLeft[1] += 2;
+            }
+        }
+
+        function checkForAllConflicts(cell){
+            let allConflicts = cell.top.conflict && cell.bottom.conflict && cell.left.conflict && cell.right.conflict;
+
+            let cellCheck = cellData.find(c => {
+                return c.coordinates[0] == cell.cell.coordinates[0] && c.coordinates[1] == cell.cell.coordinates[1];
+            })
+            
+            let isCorner = cellCheck.cellBoundaryType == "TOP_LEFT_CORNER" ||
+                            cellCheck.cellBoundaryType == "TOP_RIGHT_CORNER" ||
+                            cellCheck.cellBoundaryType == "BOTTOM_LEFT_CORNER" ||
+                            cellCheck.cellBoundaryType == "BOTTOM_RIGHT_CORNER";
+            
+            return allConflicts && !isCorner
+
+        }
+
+         
+
+
+        // moving a 4 cell square window over over the grid
+        // if one cell has all conflict change it or if is a corner change one adjacent
+        // regenerate conflict report
+        // (for now the window will move from left to right and top to bottom)
+        // check same area
+            // if the bottom two squares have bottom conflict and are not bottom facing pieces switch one
+        // (I will need to make another library for facing pieces)
+        // I will have to do special checks for boundary pieces
 
     }
+
 
 }
 

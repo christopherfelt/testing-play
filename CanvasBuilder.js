@@ -42,7 +42,8 @@ class CanvasBuilder {
 
     buildConflictGrid(data, compatiblityReport){
 
-        console.log("data", compatiblityReport);
+        console.log("data", data);
+        console.log("compatability report", compatiblityReport)
         
         for(let i = 0; i < data.cellData.length; i++){
             let topConflict = compatiblityReport[i].top.conflict
