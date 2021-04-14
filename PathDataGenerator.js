@@ -1,4 +1,4 @@
-import {ACCEPTABLE_BOUNDARY_PATH_TYPES, COMPATIBLE_PATHS} from './PathDataLibrary.js';
+import {ACCEPTABLE_BOUNDARY_PATH_TYPES, COMPATIBLE_PATHS,  PATH_ORIENTATION} from './PathDataLibrary.js';
 
 
 class PathDataGenerator {
@@ -128,86 +128,89 @@ class PathDataGenerator {
         let cellData = this.cellData;
         
         for(let i = 0; i < cellData.length; i++){
-            // abstract out this logic to a seperate method
             
             let cell = cellData[i];
+
+            this.compatiblityReport.push(this.analyzeCell(cell));
+
+        }
+    }
+
+    analyzeCell(cell){
+        let reportRecord = {
+            cell:{},
+            top:{},
+            bottom:{},
+            left:{},
+            right:{}
+        };
+        
+        // Record the current cells data
+        reportRecord.cell.coordinates = cell.coordinates;
+        reportRecord.cell.selectedPath = cell.selectedPath;
+
+        // Get the coordinates for the bottom and right adjacent cells
+        let adjTopCellCoors = cell.coordinates[1]-1 > 0 ? [cell.coordinates[0], cell.coordinates[1]-1] : "NA";
+        let adjBottomCellCoors = cell.coordinates[1]+1 <= this.gridHeight ? [cell.coordinates[0], cell.coordinates[1]+1] : "NA";
+        let adjLeftCellCoors = cell.coordinates[0]-1 > 0 ? [cell.coordinates[0]-1, cell.coordinates[1]] : "NA";
+        let adjRightCellCoors =  cell.coordinates[0]+1 <= this.gridWidth ? [cell.coordinates[0]+1, cell.coordinates[1]] : "NA";
+        
+        // Find the cells in the celldata
+        let adjTopCellSelectedPath = adjTopCellCoors == "NA" ? "NA" : this.cellData.find(p => {
+            return p.coordinates[0] == adjTopCellCoors[0] && p.coordinates[1] == adjTopCellCoors[1] });
+
+        let adjBottomCellSelectedPath = adjBottomCellCoors == "NA" ? "NA" : this.cellData.find(p => {
+            return p.coordinates[0] == adjBottomCellCoors[0] && p.coordinates[1] == adjBottomCellCoors[1] });
+
+        let adjLeftCellSelectedPath = adjLeftCellCoors == "NA" ? "NA" :  this.cellData.find((p) => {
+                return p.coordinates[0] == adjLeftCellCoors[0] && p.coordinates[1] == adjLeftCellCoors[1]})
+
+        let adjRightCellSelectedPath = adjRightCellCoors == "NA" ? "NA" :  this.cellData.find((p) => {
+            return p.coordinates[0] == adjRightCellCoors[0] && p.coordinates[1] == adjRightCellCoors[1]})
             
-            let reportRecord = {
-                cell:{},
-                top:{},
-                bottom:{},
-                left:{},
-                right:{}
-            };
-            
-            // Record the current cells data
-            reportRecord.cell.coordinates = cell.coordinates;
-            reportRecord.cell.selectedPath = cell.selectedPath;
-
-            // Get the coordinates for the bottom and right adjacent cells
-            let adjTopCellCoors = cell.coordinates[1]-1 > 0 ? [cell.coordinates[0], cell.coordinates[1]-1] : "NA";
-            let adjBottomCellCoors = cell.coordinates[1]+1 <= this.gridHeight ? [cell.coordinates[0], cell.coordinates[1]+1] : "NA";
-            let adjLeftCellCoors = cell.coordinates[0]-1 > 0 ? [cell.coordinates[0]-1, cell.coordinates[1]] : "NA";
-            let adjRightCellCoors =  cell.coordinates[0]+1 <= this.gridWidth ? [cell.coordinates[0]+1, cell.coordinates[1]] : "NA";
-            
-            // Find the cells in the celldata
-            let adjTopCellSelectedPath = adjTopCellCoors == "NA" ? "NA" : cellData.find(p => {
-                return p.coordinates[0] == adjTopCellCoors[0] && p.coordinates[1] == adjTopCellCoors[1] });
-
-            let adjBottomCellSelectedPath = adjBottomCellCoors == "NA" ? "NA" : cellData.find(p => {
-                return p.coordinates[0] == adjBottomCellCoors[0] && p.coordinates[1] == adjBottomCellCoors[1] });
-
-            let adjLeftCellSelectedPath = adjLeftCellCoors == "NA" ? "NA" :  cellData.find((p) => {
-                    return p.coordinates[0] == adjLeftCellCoors[0] && p.coordinates[1] == adjLeftCellCoors[1]})
-
-            let adjRightCellSelectedPath = adjRightCellCoors == "NA" ? "NA" :  cellData.find((p) => {
-                return p.coordinates[0] == adjRightCellCoors[0] && p.coordinates[1] == adjRightCellCoors[1]})
-                
-            // Determine if the selected paths for the adjacent cells conflict with the current cells path and add it to the record
-            // Record cell data for the adjacent cells
-            if(adjTopCellCoors == "NA"){
-                reportRecord.top.coordinates = "NA";
-                reportRecord.top.selectedPath = "NA";
-                reportRecord.top.conflict = true;
-            } else {
-                reportRecord.top.coordinates = adjTopCellCoors;
-                reportRecord.top.selectedPath = adjTopCellSelectedPath["selectedPath"];
-                reportRecord.top.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["TOP"].includes(reportRecord.top.selectedPath);
-            }
-
-            if(adjBottomCellCoors == "NA"){
-                reportRecord.bottom.coordinates = "NA";
-                reportRecord.bottom.selectedPath = "NA";
-                reportRecord.bottom.conflict = true;
-            } else {
-                reportRecord.bottom.coordinates = adjBottomCellCoors;
-                reportRecord.bottom.selectedPath = adjBottomCellSelectedPath["selectedPath"];
-                reportRecord.bottom.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["BOTTOM"].includes(reportRecord.bottom.selectedPath);
-            }
-
-            if(adjLeftCellCoors == "NA"){
-                reportRecord.left.coordinates = "NA";
-                reportRecord.left.selectedPath = "NA";
-                reportRecord.left.conflict = true;
-            } else {
-                reportRecord.left.coordinates = adjLeftCellCoors;
-                reportRecord.left.selectedPath = adjLeftCellSelectedPath["selectedPath"];
-                reportRecord.left.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["LEFT"].includes(reportRecord.left.selectedPath);
-            }
-
-            if(adjRightCellCoors == "NA"){
-                reportRecord.right.coordinates = "NA";
-                reportRecord.right.selectedPath = "NA";
-                reportRecord.right.conflict = true;
-            } else {
-                reportRecord.right.coordinates = adjRightCellCoors;
-                reportRecord.right.selectedPath = adjRightCellSelectedPath["selectedPath"];
-                reportRecord.right.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["RIGHT"].includes(reportRecord.right.selectedPath);
-            }
-
-            this.compatiblityReport.push(reportRecord);
+        // Determine if the selected paths for the adjacent cells conflict with the current cells path and add it to the record
+        // Record cell data for the adjacent cells
+        if(adjTopCellCoors == "NA"){
+            reportRecord.top.coordinates = "NA";
+            reportRecord.top.selectedPath = "NA";
+            reportRecord.top.conflict = true;
+        } else {
+            reportRecord.top.coordinates = adjTopCellCoors;
+            reportRecord.top.selectedPath = adjTopCellSelectedPath["selectedPath"];
+            reportRecord.top.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["TOP"].includes(reportRecord.top.selectedPath);
         }
 
+        if(adjBottomCellCoors == "NA"){
+            reportRecord.bottom.coordinates = "NA";
+            reportRecord.bottom.selectedPath = "NA";
+            reportRecord.bottom.conflict = true;
+        } else {
+            reportRecord.bottom.coordinates = adjBottomCellCoors;
+            reportRecord.bottom.selectedPath = adjBottomCellSelectedPath["selectedPath"];
+            reportRecord.bottom.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["BOTTOM"].includes(reportRecord.bottom.selectedPath);
+        }
+
+        if(adjLeftCellCoors == "NA"){
+            reportRecord.left.coordinates = "NA";
+            reportRecord.left.selectedPath = "NA";
+            reportRecord.left.conflict = true;
+        } else {
+            reportRecord.left.coordinates = adjLeftCellCoors;
+            reportRecord.left.selectedPath = adjLeftCellSelectedPath["selectedPath"];
+            reportRecord.left.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["LEFT"].includes(reportRecord.left.selectedPath);
+        }
+
+        if(adjRightCellCoors == "NA"){
+            reportRecord.right.coordinates = "NA";
+            reportRecord.right.selectedPath = "NA";
+            reportRecord.right.conflict = true;
+        } else {
+            reportRecord.right.coordinates = adjRightCellCoors;
+            reportRecord.right.selectedPath = adjRightCellSelectedPath["selectedPath"];
+            reportRecord.right.conflict = !COMPATIBLE_PATHS[cell.selectedPath]["RIGHT"].includes(reportRecord.right.selectedPath);
+        }
+
+        return reportRecord;
     }
 
     resolvePathConflicts(){
@@ -230,27 +233,58 @@ class PathDataGenerator {
 
             // // find cell report record
             let window = [topLeft, topRight, bottomLeft, bottomRight]
-            let compatibilityRecordsForWindowCells = [];
+            let allRecordsForWindowCells = [];
 
-            // //find if one has all conflicts
+            //find if one cell has all conflicts
+            // for(let c = 0; c < window.length; c++){
+            //     let windowCell = window[c];
+                
+
+            //     let cellCompatibilityRecord = this.compatiblityReport.find(r => {
+            //         return r.cell.coordinates[0] == windowCell[0] && r.cell.coordinates[1] == windowCell[1];
+            //     })
+
+            //     let allConflicts = checkForAllConflicts(cellCompatibilityRecord);
+
+            //     console.log("All Conflicts: " + windowCell + " " + allConflicts);
+
+            //     if(allConflict){
+            //         let cellRecord= cellData.find(c => {
+            //             return c.coordinates[0] == windowCell[0] && c.coordinates[1] == windowCell[1];
+            //         })
+            //         if(cellRecord.cellBoundaryType == "")
+            //     }
+
+            // }
+
             for(let c = 0; c < window.length; c++){
                 let windowCell = window[c];
-                let cell = this.compatiblityReport.find(r => {
+
+                let cellRecord= cellData.find(c => {
+                    return c.coordinates[0] == windowCell[0] && c.coordinates[1] == windowCell[1];
+                })
+
+                let cellCompatibilityRecord = this.compatiblityReport.find(r => {
                     return r.cell.coordinates[0] == windowCell[0] && r.cell.coordinates[1] == windowCell[1];
                 })
 
-                let allConflicts = checkForAllConflicts(cell);
+                allRecordsForWindowCells.push({data: cellRecord, conflict: cellCompatibilityRecord})
 
-                console.log("All Conflicts: " + windowCell + " " + allConflicts);
-
-                // if(cell)
             }
 
-            // let topLeftCompatibilityRecord = this.compatiblityReport.find(r => {
-            //     return r.cell.coordinates[0] == windowCell[0] && r.cell.coordinates[1] == windowCell[1];
-            // })
+            let topLeftRightConflict = allRecordsForWindowCells[0].conflict.right.conflict;
+            let topLeftBoundaryType = allRecordsForWindowCells[0].data.cellBoundaryType;
+            let topLeftPath = allRecordsForWindowCells[0].data.selectedPath;
 
-            
+            if(topLeftRightConflict && topLeftBoundaryType !="TOP_LEFT_CORNER" && !PATH_ORIENTATION.RIGHT_FACING.includes(topLeftPath)){
+                console.log("Selected Path Before: " + topLeftPath)
+                console.log(topLeft);
+                allRecordsForWindowCells[0].data.selectedPath = "HORIZONTAL_BOTTOM";
+                let recordCheck = this.cellData.find(c => {
+                    return c.coordinates[0] == topLeft[0] && c.coordinates[1] == topLeft[1];
+                })
+                console.log("Selected Path after: ", recordCheck);
+            }
 
 
             topLeft[0] += 2;

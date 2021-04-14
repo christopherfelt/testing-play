@@ -10,8 +10,7 @@
 
 
 #Next Daily Task:
-- Finish adding generateCellRecord to generatePathData
-- Test
+- Rethink all conflict funtionality
 
 #Sprint Tasks:
 - Create a PathDataGenerator.js
