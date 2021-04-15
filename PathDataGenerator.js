@@ -97,7 +97,7 @@ class PathDataGenerator {
         // console.log(cellBoundaryType);
         // console.log("(" + x_counter + ", " + y_counter, ")");
         let cellRecord = {}
-        cellRecord["cellBoundayType"] = cellBoundaryType;
+        cellRecord["cellBoundaryType"] = cellBoundaryType;
         cellRecord["coordinates"] = [x_counter, y_counter];
         cellRecord["acceptableBoundaryPathTypes"] = ACCEPTABLE_BOUNDARY_PATH_TYPES[cellBoundaryType];
         cellRecord["selectedPath"] = this.determineRandomPath(cellRecord);
@@ -229,13 +229,11 @@ class PathDataGenerator {
             topRight = [topLeft[0]+1, topLeft[1]];
             bottomLeft = [topLeft[0], topLeft[1]+1];
             bottomRight = [topLeft[0]+1, topLeft[1]+1];
-            console.log(topLeft, topRight, bottomLeft, bottomRight);
-
             // // find cell report record
             let window = [topLeft, topRight, bottomLeft, bottomRight]
             let allRecordsForWindowCells = [];
 
-            //find if one cell has all conflicts
+            // find if one cell has all conflicts
             // for(let c = 0; c < window.length; c++){
             //     let windowCell = window[c];
                 
@@ -276,23 +274,35 @@ class PathDataGenerator {
             let topLeftBoundaryType = allRecordsForWindowCells[0].data.cellBoundaryType;
             let topLeftPath = allRecordsForWindowCells[0].data.selectedPath;
 
+            let topRightLeftConflict = allRecordsForWindowCells[1].conflict.left.conflict;
+            let topRightBoundaryType = allRecordsForWindowCells[1].data.cellBoundaryType;
+            let topRightPath = allRecordsForWindowCells[1].data.selectedPath;
+
+
             if(topLeftRightConflict && topLeftBoundaryType !="TOP_LEFT_CORNER" && !PATH_ORIENTATION.RIGHT_FACING.includes(topLeftPath)){
-                console.log("Selected Path Before: " + topLeftPath)
-                console.log(topLeft);
-                allRecordsForWindowCells[0].data.selectedPath = "HORIZONTAL_BOTTOM";
-                let recordCheck = this.cellData.find(c => {
-                    return c.coordinates[0] == topLeft[0] && c.coordinates[1] == topLeft[1];
-                })
-                console.log("Selected Path after: ", recordCheck);
+                
+                if(topLeftBoundaryType == "TOP"){allRecordsForWindowCells[0].data.selectedPath = "HORIZONTAL_BOTTOM"}
+                else if(topLeftBoundaryType == "LEFT"){allRecordsForWindowCells[0].data.selectedPath = "VERTICAL_RIGHT"}
+                else{allRecordsForWindowCells[0].data.selectedPath = "CROSS"}
+
+                this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
+                this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
+                continue;
             }
 
+            //do the remaining cells
 
+            
+            //also make the window overlapping by reducing the 2s to 1s in the little bit below
             topLeft[0] += 2;
             if(topLeft[0] >= this.gridWidth){
                 topLeft[0] = 1;
                 topLeft[1] += 2;
             }
         }
+
+
+
 
         function checkForAllConflicts(cell){
             let allConflicts = cell.top.conflict && cell.bottom.conflict && cell.left.conflict && cell.right.conflict;
@@ -322,6 +332,20 @@ class PathDataGenerator {
         // (I will need to make another library for facing pieces)
         // I will have to do special checks for boundary pieces
 
+    }
+
+   updateConflictRecords(cellCoordinates, analysis){
+
+        let compatibilityRecordIndex = this.compatiblityReport.findIndex(r => {
+            return this.compareCellCoordinates(r.cell.coordinates, cellCoordinates)
+        })
+
+        this.compatiblityReport[compatibilityRecordIndex] = analysis;
+        
+    }
+
+    compareCellCoordinates(cell1, cell2){
+        return cell1[0] == cell2[0] && cell1[1] == cell2[1];
     }
 
 
