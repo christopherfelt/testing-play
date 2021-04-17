@@ -290,6 +290,17 @@ class PathDataGenerator {
                 continue;
             }
 
+            if(topRightLeftConflict && topLeftBoundaryType !="TOP_RIGHT_CORNER" && !PATH_ORIENTATION.LEFT_FACING.includes(topRightPath)){
+                
+                if(topRightBoundaryType == "TOP"){allRecordsForWindowCells[0].data.selectedPath = "HORIZONTAL_BOTTOM"}
+                else if(topRightBoundaryType == "RIGHT"){allRecordsForWindowCells[0].data.selectedPath = "VERTICAL_LEFT"}
+                else{allRecordsForWindowCells[0].data.selectedPath = "CROSS"}
+
+                this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
+                this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
+                continue;
+            }
+
             //do the remaining cells
 
             
