@@ -267,7 +267,6 @@ class PathDataGenerator {
             let bottomRightPath = allRecordsForWindowCells[3].data.selectedPath;
 
             let topLeftBottomConflict = allRecordsForWindowCells[0].conflict.bottom.conflict;
-
             let bottomLeftTopConflict = allRecordsForWindowCells[2].conflict.top.conflict;
 
 
@@ -277,10 +276,12 @@ class PathDataGenerator {
                 // console.log(allRecordsForWindowCells[0]);
                 if(topLeftBoundaryType == "TOP"){allRecordsForWindowCells[0].data.selectedPath = "HORIZONTAL_BOTTOM"}
                 else if(topLeftBoundaryType == "LEFT"){allRecordsForWindowCells[0].data.selectedPath = "VERTICAL_RIGHT"}
-                else{allRecordsForWindowCells[0].data.selectedPath = "CROSS"}
+                else{allRecordsForWindowCells[0].data.selectedPath = "HORIZONTAL_STRAIGHT"}
 
                 this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
                 this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
+                this.updateConflictRecords(bottomLeft, this.analyzeCell(allRecordsForWindowCells[2].data));
+                this.updateConflictRecords(bottomRight, this.analyzeCell(allRecordsForWindowCells[3].data));
                 windowRepeatCount++;
                 continue;
             }
@@ -291,10 +292,12 @@ class PathDataGenerator {
                 // console.log(allRecordsForWindowCells[1]);
                 if(topRightBoundaryType == "TOP"){allRecordsForWindowCells[1].data.selectedPath = "HORIZONTAL_BOTTOM"}
                 else if(topRightBoundaryType == "RIGHT"){allRecordsForWindowCells[1].data.selectedPath = "VERTICAL_LEFT"}
-                else{allRecordsForWindowCells[1].data.selectedPath = "CROSS"}
+                else{allRecordsForWindowCells[1].data.selectedPath = "HORIZONTAL_STRAIGHT"}
 
                 this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
                 this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
+                this.updateConflictRecords(bottomLeft, this.analyzeCell(allRecordsForWindowCells[2].data));
+                this.updateConflictRecords(bottomRight, this.analyzeCell(allRecordsForWindowCells[3].data));
                 windowRepeatCount++;
                 continue;
             }
@@ -305,8 +308,10 @@ class PathDataGenerator {
                 // console.log(allRecordsForWindowCells[2]);
                 if(bottomLeftBoundaryType == "BOTTOM"){allRecordsForWindowCells[2].data.selectedPath = "HORIZONTAL_TOP"}
                 else if(bottomLeftBoundaryType == "LEFT"){allRecordsForWindowCells[2].data.selectedPath = "VERTICAL_RIGHT"}
-                else{allRecordsForWindowCells[2].data.selectedPath = "CROSS"}
+                else{allRecordsForWindowCells[2].data.selectedPath = "HORIZONTAL_STRAIGHT"}
 
+                this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
+                this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
                 this.updateConflictRecords(bottomLeft, this.analyzeCell(allRecordsForWindowCells[2].data));
                 this.updateConflictRecords(bottomRight, this.analyzeCell(allRecordsForWindowCells[3].data));
                 windowRepeatCount++;
@@ -319,13 +324,46 @@ class PathDataGenerator {
                 // console.log(allRecordsForWindowCells[3]);
                 if(bottomRightBoundaryType == "BOTTOM"){allRecordsForWindowCells[3].data.selectedPath = "HORIZONTAL_TOP"}
                 else if(bottomRightBoundaryType == "RIGHT"){allRecordsForWindowCells[3].data.selectedPath = "VERTICAL_LEFT"}
-                else{allRecordsForWindowCells[3].data.selectedPath = "CROSS"}
+                else{allRecordsForWindowCells[3].data.selectedPath = "HORIZONTAL_STRAIGHT"}
 
+                this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
+                this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
                 this.updateConflictRecords(bottomLeft, this.analyzeCell(allRecordsForWindowCells[2].data));
                 this.updateConflictRecords(bottomRight, this.analyzeCell(allRecordsForWindowCells[3].data));
                 windowRepeatCount++;
                 continue;
             }
+
+            // if(topLeftBottomConflict && topLeftBoundaryType !="TOP_LEFT_CORNER" && !PATH_ORIENTATION.BOTTOM_FACING.includes(topLeftPath)){
+            //     console.log("topleft Bottom resolution");
+            //     if(topLeftBoundaryType == "TOP"){allRecordsForWindowCells[0].data.selectedPath = "HORIZONTAL_BOTTOM"}
+            //     else if(topLeftBoundaryType == "LEFT"){allRecordsForWindowCells[0].data.selectedPath = "VERTICAL_RIGHT"}
+            //     else{allRecordsForWindowCells[0].data.selectedPath = "CROSS"}
+
+            //     this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
+            //     this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
+            //     this.updateConflictRecords(bottomLeft, this.analyzeCell(allRecordsForWindowCells[2].data));
+            //     this.updateConflictRecords(bottomRight, this.analyzeCell(allRecordsForWindowCells[3].data));
+            //     windowRepeatCount++;
+            //     continue;
+            // }
+
+            // if(bottomLeftTopConflict && bottomLeftBoundaryType !="BOTTOM_LEFT_CORNER" && !PATH_ORIENTATION.TOP_FACING.includes(bottomLeftPath)){
+            //     console.log("bottom left Top resolution");
+            //     // console.log(allRecordsForWindowCells[2]);
+            //     if(bottomLeftBoundaryType == "BOTTOM"){allRecordsForWindowCells[2].data.selectedPath = "HORIZONTAL_TOP"}
+            //     else if(bottomLeftBoundaryType == "LEFT"){allRecordsForWindowCells[2].data.selectedPath = "VERTICAL_RIGHT"}
+            //     else{allRecordsForWindowCells[2].data.selectedPath = ""}
+
+            //     this.updateConflictRecords(topLeft, this.analyzeCell(allRecordsForWindowCells[0].data));
+            //     this.updateConflictRecords(topRight, this.analyzeCell(allRecordsForWindowCells[1].data));
+            //     this.updateConflictRecords(bottomLeft, this.analyzeCell(allRecordsForWindowCells[2].data));
+            //     this.updateConflictRecords(bottomRight, this.analyzeCell(allRecordsForWindowCells[3].data));
+            //     windowRepeatCount++;
+            //     continue;
+            // }
+
+
 
             console.log(topLeft, this.gridWidth)
             console.log("==================RESOLVED==================")
@@ -338,36 +376,6 @@ class PathDataGenerator {
             }
         }
 
-
-
-
-        function checkForAllConflicts(cell){
-            let allConflicts = cell.top.conflict && cell.bottom.conflict && cell.left.conflict && cell.right.conflict;
-
-            let cellCheck = cellData.find(c => {
-                return c.coordinates[0] == cell.cell.coordinates[0] && c.coordinates[1] == cell.cell.coordinates[1];
-            })
-            
-            let isCorner = cellCheck.cellBoundaryType == "TOP_LEFT_CORNER" ||
-                            cellCheck.cellBoundaryType == "TOP_RIGHT_CORNER" ||
-                            cellCheck.cellBoundaryType == "BOTTOM_LEFT_CORNER" ||
-                            cellCheck.cellBoundaryType == "BOTTOM_RIGHT_CORNER";
-            
-            return allConflicts && !isCorner
-
-        }
-
-         
-
-
-        // moving a 4 cell square window over over the grid
-        // if one cell has all conflict change it or if is a corner change one adjacent
-        // regenerate conflict report
-        // (for now the window will move from left to right and top to bottom)
-        // check same area
-            // if the bottom two squares have bottom conflict and are not bottom facing pieces switch one
-        // (I will need to make another library for facing pieces)
-        // I will have to do special checks for boundary pieces
 
     }
 
