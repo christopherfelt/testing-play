@@ -26,15 +26,15 @@ class CanvasBuilder {
 
     buildGrid(){
         this.ctx.setLineDash([6]);
-        for(let i = 1; i < 4; i++){
+        for(let i = 1; i < 6; i++){
             this.ctx.beginPath();
             this.ctx.moveTo(0, i*100);
-            this.ctx.lineTo(400, i*100);
+            this.ctx.lineTo(600, i*100);
             this.ctx.stroke();
 
             this.ctx.beginPath();
             this.ctx.moveTo(i*100, 0);
-            this.ctx.lineTo(i*100, 400);
+            this.ctx.lineTo(i*100, 600);
             this.ctx.stroke();
         }
         this.ctx.setLineDash([]);
