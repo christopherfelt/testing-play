@@ -357,28 +357,78 @@ class PathDataGenerator {
         let compatiblityReport = this.compatiblityReport
 
         let firstCell = [1,1]
-        let lastCell = [this.gridWidth, firstCell[1]+1];
 
-        let window = compatiblityReport.filter(c =>{
-            // console.log(c.cell.coordinates)
-            // console.log(lastCell[1])
-            // console.log(c.cell.coordinates[0] >= 1, c.cell.coordinates[0] <= this.gridWidth, c.cell.coordinates[1] >= firstCell[1],  c.cell.coordinates <= lastCell[1])
-            return c.cell.coordinates[0] >= 1 && c.cell.coordinates[0] <= this.gridWidth && c.cell.coordinates[1] >= firstCell[1] && c.cell.coordinates[1] <= lastCell[1]
-        })
+        while(firstCell[1] <= this.gridHeight-1){
+            console.log(firstCell[1]);
 
-        console.log(window);
+            let topRow = compatiblityReport.filter(c =>{
+                return c.cell.coordinates[0] >= 1 && c.cell.coordinates[0] <= this.gridWidth && c.cell.coordinates[1] == firstCell[1]
+            })
 
-        // while(firstCell[0] != this.gridHeight-1){
+            console.log(topRow);
 
-        //     // for(let c = 1; c <)
+            //Are there any that have a connection to the next row
+            let bottomConnection = topRow.find(r => {
+                return r.bottom.conflict == false;
+            });
 
-        //     firstCell[1] +=1
-        // }
+            console.log("find bottom connection", bottomConnection);
+
+            let bottomFacing;
+            if(!bottomConnection){
+                bottomFacing = topRow.find(r => {
+                    return PATH_ORIENTATION["BOTTOM_FACING"].includes(r.cell.selectedPath);
+                })
+                console.log("bottom facing", bottomFacing);
+                if(bottomFacing){
+                    console.log("Bottom Facing Cell: ", bottomFacing.cell.coordinates);
+
+
+                    //TODO CHANGE THE FOLLOWING TO FIND INDEX
+
+
+                    let correspondingBottomCell = cellData.find(c => {
+                        return this.compareCellCoordinates(c.coordinates, [bottomFacing.cell.coordinates[0],bottomFacing.cell.coordinates[1]+1]);
+                    })
+
+                    console.log("Corresponding Botom Cell before: ", correspondingBottomCell);
+    
+                    if(correspondingBottomCell.cellBoundaryType == "LEFT"){
+                        console.log("Fixing Left");
+                        correspondingBottomCell.selectedPath == "VERTICAL_RIGHT";
+                    } else if(correspondingBottomCell.cellBoundaryType == "RIGHT"){
+                        console.log("Fixing Right");
+                        correspondingBottomCell.selectedPath == "VERTICAL_LEFT";
+                    } else if(correspondingBottomCell.cellBoundaryType == "CENTER"){
+                        console.log("Fixing Cener");
+                        correspondingBottomCell.selectedPath == "CROSS";
+                    }
+
+                    console.log("Corresponding Botom Cell after: ", correspondingBottomCell);
+
+                }else {
+                    console.log("No Bottom Facing Parts");
+                    let chosenTopRow = cellData.find(c => {
+                        return this.compareCellCoordinates(c.coordinates, topRow[3].cell.coordinates);
+                    })
+
+                    chosenTopRow.selectedPath = "HORIZONTAL BOTTOM";
+
+                    continue;
+                }
+            }
+
+            firstCell[1] +=1
+        }
         
         
     }
 
+    updateSurroundingConflictRecords(cellCoordinates){
+        let cellCoors = cellCoordinates;
+        let topCellCoors = [cellCoordinates[0], cellCoordinates[1]-1];
 
+    }
 
 
    updateConflictRecords(cellCoordinates, analysis){
