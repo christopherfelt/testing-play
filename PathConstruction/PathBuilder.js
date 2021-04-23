@@ -10,6 +10,9 @@ class PathBuilder {
     }
 
     buildPath(){
+
+        this.ctx.lineWidth = 40;
+
         for(let i = 0; i < this.cellData.length; i++){
             let cell = this.cellData[i];
             this.x = (cell.coordinates[0]-1)*this.width;

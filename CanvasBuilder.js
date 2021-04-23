@@ -1,5 +1,5 @@
-import PathDataGenerator from "./PathDataGenerator.js";
-import PathBuilder from "./PathBuilder.js"
+import PathDataGenerator from "./PathDataGeneration/PathDataGenerator.js";
+import PathBuilder from "./PathConstruction/PathBuilder.js"
  
 
 class CanvasBuilder {
@@ -98,7 +98,7 @@ class CanvasBuilder {
         this.buildGrid();
 
         let compatiblityReport = pdg.getCompatibilityReport();
-        this.buildConflictGrid(data, compatiblityReport);
+        // this.buildConflictGrid(data, compatiblityReport);
 
         let pb = new PathBuilder(data, this.ctx);
         pb.buildPath();

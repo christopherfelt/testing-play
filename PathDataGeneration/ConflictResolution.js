@@ -1,126 +1,18 @@
 import {ACCEPTABLE_BOUNDARY_PATH_TYPES, COMPATIBLE_PATHS,  PATH_ORIENTATION} from './PathDataLibrary.js';
 
 
-class PathDataGenerator {
-
-    constructor(){
-        this.gridWidth = 6;
-        this.gridHeight = 6;
-        this.gridSize = this.gridWidth * this.gridHeight;
-        this.x = 0;
-        this.y = 0;
-        this.cellWidth = 100;
-        this.cellHeight = 100;
-        this.boundaryCells = [];
-        this.acceptablePaths = [];
-        this.randomPath = 0;
-        this.cellData = [];
-        this.compatiblityReport = [];
-
-    }
-
-    setGridSize(width, height){
+class ConflictResolver {
+    constructor(cellData, compatiblityReport, width, height){
+        this.cellData = cellData;
+        this.compatiblityReport = compatiblityReport;
         this.gridWidth = width;
-        this.gridHeight = height;
-        this.gridSize = this.gridWidth * this.gridHeight;
-    }
-
-    setCellSize(width, height){
-        this.cellWidth = width;
-        this.cellHeight = height;
-    }
-
-    getAllData(){
-        let gridData = {
-            cellWidth: this.cellWidth,
-            cellHeight: this.cellHeight,
-            gridSize: this.gridSize,
-            cellData: this.cellData
-        }
-        return gridData;
-    }
-
-    getCompatibilityReport(){
-        return this.compatiblityReport;
-    }
-
-    generatePathData(){
-        this.generateInitialPathData();
-        this.analyzePath();
-        this.resolvePathConflicts();
-        // console.log(this.compatiblityReport);
-
-
-    }
-
-    generateInitialPathData(){
-        // consider doing an array of objects
-        // add random this this function
-        let x_counter = 1;
-        let y_counter = 1;
-        for(let i = 1; i <= this.gridSize; i++){
-
-            if(y_counter == 1){
-                if(x_counter == 1){
-                    this.generateCellRecord('TOP_LEFT_CORNER', x_counter, y_counter);
-
-                } else if (x_counter == this.gridWidth){
-                    this.generateCellRecord('TOP_RIGHT_CORNER', x_counter, y_counter);
-                } else {
-                    this.generateCellRecord('TOP', x_counter, y_counter);
-                }
-            } else if (y_counter == this.gridHeight){
-                if(x_counter == 1){
-                    this.generateCellRecord('BOTTOM_LEFT_CORNER', x_counter, y_counter);
-                } else if(x_counter == this.gridWidth){
-                    this.generateCellRecord('BOTTOM_RIGHT_CORNER', x_counter, y_counter);
-                } else {
-                    this.generateCellRecord('BOTTOM', x_counter, y_counter);
-                }
-            } else if (x_counter == 1){
-                this.generateCellRecord('LEFT', x_counter, y_counter);
-            } else if (x_counter == this.gridWidth){
-                this.generateCellRecord('RIGHT', x_counter, y_counter);
-            } else {
-                this.generateCellRecord('CENTER', x_counter, y_counter);
-            }
-
-            if(x_counter==this.gridWidth){
-                y_counter++;
-                x_counter=0;
-            }
-            x_counter++;
-        }
-    }
-
-    generateCellRecord(cellBoundaryType, x_counter, y_counter){
-        // console.log(cellBoundaryType);
-        // console.log("(" + x_counter + ", " + y_counter, ")");
-        let cellRecord = {}
-        cellRecord["cellBoundaryType"] = cellBoundaryType;
-        cellRecord["coordinates"] = [x_counter, y_counter];
-        cellRecord["acceptableBoundaryPathTypes"] = ACCEPTABLE_BOUNDARY_PATH_TYPES[cellBoundaryType];
-        cellRecord["selectedPath"] = this.determineRandomPath(cellRecord);
-        this.cellData.push(cellRecord);
-    }
-
-    determineRandomPath(cellRecord){
-        let paths = cellRecord.acceptableBoundaryPathTypes
-        let randomPath;
-        if(paths.length > 1){
-            randomPath = paths[Math.floor(Math.random()*paths.length)];
-        } else if(paths.length == 1){
-            randomPath = paths[0];
-        }
-        return randomPath;
+        this.gridHeight = height 
     }
 
     resolveConflicts(){
-        // create initial compatibility report
         this.analyzePath();
-        // resolveConflicts
-        
-
+        this.resolvePathConflicts();
+        return [this.cellData, this.compatiblityReport];
     }
 
     analyzePath(){
@@ -146,6 +38,7 @@ class PathDataGenerator {
         };
         
         // Record the current cells data
+        console.log(cell)
         reportRecord.cell.coordinates = cell.coordinates;
         reportRecord.cell.selectedPath = cell.selectedPath;
 
@@ -214,7 +107,6 @@ class PathDataGenerator {
     }
 
     resolvePathConflicts(){
-
         this.resolveConflictsHorizontally();
         this.resolveConflictsVertically();
 
@@ -395,13 +287,20 @@ class PathDataGenerator {
     
                     if(correspondingBottomCell.cellBoundaryType == "LEFT"){
                         console.log("Fixing Left");
-                        correspondingBottomCell.selectedPath == "VERTICAL_RIGHT";
+                        correspondingBottomCell.selectedPath = "VERTICAL_RIGHT";
+                        this.updateSurroundingConflictRecords(correspondingBottomCell.coordinates);
                     } else if(correspondingBottomCell.cellBoundaryType == "RIGHT"){
                         console.log("Fixing Right");
-                        correspondingBottomCell.selectedPath == "VERTICAL_LEFT";
+                        correspondingBottomCell.selectedPath = "VERTICAL_LEFT";
+                        this.updateSurroundingConflictRecords(correspondingBottomCell.coordinates);
                     } else if(correspondingBottomCell.cellBoundaryType == "CENTER"){
                         console.log("Fixing Cener");
-                        correspondingBottomCell.selectedPath == "CROSS";
+                        correspondingBottomCell.selectedPath = "CROSS";
+                        this.updateSurroundingConflictRecords(correspondingBottomCell.coordinates);
+                    } else if(correspondingBottomCell.cellBoundaryType == "BOTTOM"){
+                        console.log("fixing bottom");
+                        correspondingBottomCell.selectedPath = "HORIZONTAL_TOP";
+                        this.updateSurroundingConflictRecords(correspondingBottomCell.coordinates);
                     }
 
                     console.log("Corresponding Botom Cell after: ", correspondingBottomCell);
@@ -412,7 +311,8 @@ class PathDataGenerator {
                         return this.compareCellCoordinates(c.coordinates, topRow[3].cell.coordinates);
                     })
 
-                    chosenTopRow.selectedPath = "HORIZONTAL BOTTOM";
+                    chosenTopRow.selectedPath = "HORIZONTAL_BOTTOM";
+                    this.updateSurroundingConflictRecords(topRow[3].cell.coordinates);
 
                     continue;
                 }
@@ -420,13 +320,25 @@ class PathDataGenerator {
 
             firstCell[1] +=1
         }
-        
-        
     }
 
     updateSurroundingConflictRecords(cellCoordinates){
-        let cellCoors = cellCoordinates;
-        let topCellCoors = [cellCoordinates[0], cellCoordinates[1]-1];
+        let cellData = this.cellData.find(c => {
+            return this.compareCellCoordinates(c.coordinates, cellCoordinates)
+        }) ;
+        let topCellData = this.cellData.find(c => {
+            return this.compareCellCoordinates(c.coordinates, [cellCoordinates[0], cellCoordinates[1]-1])
+        }) ;
+
+        let bottomCellData = this.cellData.find(c => {
+            return this.compareCellCoordinates(c.coordinates, [cellCoordinates[0], cellCoordinates[1]+1])
+        }) ;
+
+        this.updateConflictRecords(cellCoordinates, this.analyzeCell(cellData));
+        this.updateConflictRecords([cellCoordinates[0], cellCoordinates[1]-1], this.analyzeCell(topCellData));
+        this.updateConflictRecords([cellCoordinates[0], cellCoordinates[1]+1], this.analyzeCell(bottomCellData));
+
+
 
     }
 
@@ -450,4 +362,4 @@ class PathDataGenerator {
 
 }
 
-export default PathDataGenerator;
+export default ConflictResolver;
